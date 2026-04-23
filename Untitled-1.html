@@ -1,0 +1,72 @@
+
+
+<button onclick="showShift('nagira', this)">柳樂</button>
+<button onclick="showShift('hikino', this)">引野</button>
+<button onclick="showShift('oono', this)">大野</button>
+
+<div id="nagira" class="shift">5/26 8:30~17:30<br>5/27</div>
+<div id="hikino" class="shift"></div>
+<div id="oono" class="shift">4/21 19:00~23:00<br>4/25 15:00~21:00</div>
+
+<!-- 今日出勤の人（← shift クラスを外す） -->
+<div id="todayShift" style="margin-top:20px; padding:10px; border:1px solid #ccc; background:#f9f9f9;"></div>
+
+<style>
+  .shift {
+    display: none;
+    margin-top: 10px;
+    padding: 10px;
+    background: #f2f2f2;
+    border: 1px solid #ccc;
+  }
+
+  .active-btn {
+    background-color: #4CAF50;
+    color: white;
+  }
+</style>
+
+<script>
+function showShift(id, btn) {
+  document.querySelectorAll('.shift').forEach(el => el.style.display = 'none');
+  document.getElementById(id).style.display = 'block';
+
+  document.querySelectorAll('button').forEach(b => b.classList.remove('active-btn'));
+  btn.classList.add('active-btn');
+}
+
+// ▼ 今日の日付（例：4/22）
+const today = (() => {
+  const d = new Date();
+  return `${d.getMonth() + 1}/${d.getDate()}`;
+})();
+
+// ▼ HTMLからシフトを読み取って今日の出勤者を表示
+function showTodayShift() {
+  let result = `<strong>今日 (${today}) の出勤</strong><br>`;
+  let found = false;
+
+  document.querySelectorAll('.shift').forEach(div => {
+    const id = div.id;
+    const name = document.querySelector(`button[onclick*="${id}"]`).innerText;
+
+    const lines = div.innerHTML.split("<br>");
+    lines.forEach(line => {
+      if (line.startsWith(today)) {
+        result += `${name}：${line}<br>`;
+        found = true;
+      }
+    });
+  });
+
+  if (!found) {
+    result += "出勤者なし";
+  }
+
+  document.getElementById("todayShift").innerHTML = result;
+}
+
+showTodayShift();
+</script>
+
+<script src="script.js"></script>
